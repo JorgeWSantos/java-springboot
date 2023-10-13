@@ -25,7 +25,10 @@ public class UserController {
             var user = this.repository.findByUsername(userModel.getUsername());
 
             if(user != null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário já existe!");
+                ErrorResponse error = new ErrorResponse();
+                error.setMessage("Esse username já existe!");
+                error.setSuccess(false);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
             }
     
             var passwordHashed = BCrypt.withDefaults().hashToString(12, userModel.getPassword().toCharArray());
@@ -42,7 +45,7 @@ public class UserController {
         } catch (Exception e) {
             ErrorResponse response = new ErrorResponse();
             response.setMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.CREATED).body(response); 
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); 
         }
     }
 }
